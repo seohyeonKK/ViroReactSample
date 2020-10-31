@@ -55,6 +55,9 @@ export default class extends Component {
     this._exitViro = this._exitViro.bind(this);
   }
 
+
+
+  
   // Replace this function with the contents of _getVRNavigator() or _getARNavigator()
   // if you are building a specific type of experience.
   render() {
