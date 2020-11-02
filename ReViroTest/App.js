@@ -38,7 +38,7 @@ var AR_NAVIGATOR_TYPE = 'AR';
 // be presented with a choice of AR or VR. By default, we offer the user a choice.
 var defaultNavigatorType = UNSET;
 
-export default class ViroSample extends Component {
+export default class ReViroTest extends Component {
   constructor() {
     super();
 
@@ -188,4 +188,4 @@ var localStyles = StyleSheet.create({
   },
 });
 
-module.exports = ViroSample;
+module.exports = ReViroTest;
