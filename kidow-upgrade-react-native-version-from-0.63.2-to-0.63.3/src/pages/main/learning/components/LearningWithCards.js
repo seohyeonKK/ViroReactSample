@@ -1,132 +1,147 @@
-import React from 'react'
-import { View, ImageBackground, Text, TouchableOpacity } from 'react-native'
-import { color, size } from 'common'
-import { Svg, Defs, Rect, Mask } from 'react-native-svg'
-import {
-  ViroARScene,
-  ViroText,
-  ViroConstants,
-  ViroBox,
-  ViroMaterials,
-  ViroCamera,
-  ViroScene,
-  Viro3DObject,
-  ViroAmbientLight,
-  ViroSpotLight,
-  ViroARPlaneSelector,
-  ViroNode,
-  ViroAnimations,
-} from '@akadrimer/react-viro'
+import React, { Component } from 'react'
+import { AppRegistry, Text, View, StyleSheet, PixelRatio, TouchableHighlight } from 'react-native'
 
-function SvgMaskedDim() {
-  return (
-    <Svg height="100%" width="100%">
-      <Defs>
-        <Mask id="mask" x="0" y="0" height="100%" width="100%">
-          <Rect height="100%" width="100%" fill="white" />
-          <Rect
-            x={37.5 * size.widthRate}
-            y={320 * size.heightRate}
-            width={300 * size.widthRate}
-            height={180 * size.widthRate}
-            rx={4 * size.widthRate}
-            fill="black"
-          />
-        </Mask>
-      </Defs>
-      <Rect height="100%" width="100%" fill="rgba(0, 0, 0, 0.5)" mask="url(#mask)" fill-opacity="0" />
-    </Svg>
-  )
+import { ViroARSceneNavigator } from '@akadrimer/react-viro'
+
+/*
+ TODO: Insert your API key below
+ */
+var sharedProps = {
+  apiKey: 'API_KEY_HERE',
 }
 
-function LookingForCard() {
-  return (
-    <>
-      <SvgMaskedDim />
-      <View style={{ width: '100%', height: '100%', position: 'absolute', alignItems: 'center' }}>
-        <Text
-          style={{
-            position: 'absolute',
-            fontFamily: 'BMJUA',
-            fontSize: size.normalizeFontSize(20),
-            color: color.text.white,
-            top: 280 * size.heightRate,
-          }}>
-          점선 안에 카드를 위치시키삼삼
-        </Text>
-        {/* <Text
-          style={{
-            position: 'absolute',
-            fontFamily: 'BMJUA',
-            fontSize: size.normalizeFontSize(20),
-            color: color.text.white,
-            top: 280 * size.heightRate,
-            textShadowColor: '#444',
-            textShadowOffset: { width: 1, height: 1 },
-            textShadowRadius: 10 * size.widthRate,
-          }}>
-          단어 '얼룩말'은 아직 준비되어있지 않아요
-        </Text> */}
-        <View
-          style={{
-            top: 318 * size.heightRate,
-            width: 306 * size.widthRate,
-            height: 184 * size.widthRate,
-            borderStyle: 'dashed',
-            borderColor: color.palette.white,
-            borderRadius: 4 * size.widthRate,
-            borderWidth: 4 * size.widthRate,
-            backgroundColor: 'transparent',
-          }}
-        />
-        {/* <TouchableOpacity
-          style={{
-            width: 160 * size.widthRate,
-            height: 42 * size.widthRate,
-            position: 'absolute',
-            bottom: 88 * size.widthRate,
-            alignSelf: 'center',
-            borderRadius: 16 * size.widthRate,
-            marginBottom: 12 * size.heightRate,
-            backgroundColor: color.button.mainDark,
-            justifyContent: 'center',
-            alignItems: 'center',
-            shadowOpacity: 0.7,
-            shadowColor: 'rgb(100, 100, 100)',
-            shadowRadius: 10,
-            shadowOffset: {
-              width: 3,
-              height: 5,
-            },
-          }}>
-          <Text
-            style={{
-              fontFamily: 'BMJUA',
-              fontSize: size.normalizeFontSize(17),
-              fontWeight: 'bold',
-              color: color.text.white,
-            }}>
-            이 단어 요청하기
-          </Text>
-        </TouchableOpacity> */}
+// Sets the default scene you want for AR and VR
+var InitialARScene = require('./js/HelloWorldSceneAR')
+
+var UNSET = 'UNSET'
+var AR_NAVIGATOR_TYPE = 'AR'
+
+// This determines which type of experience to launch in, or UNSET, if the user should
+// be presented with a choice of AR or VR. By default, we offer the user a choice.
+var defaultNavigatorType = UNSET
+
+export default class LearningWithCards extends Component {
+  constructor() {
+    super()
+
+    this.state = {
+      navigatorType: defaultNavigatorType,
+      sharedProps: sharedProps,
+    }
+    this._getExperienceSelector = this._getExperienceSelector.bind(this)
+    this._getARNavigator = this._getARNavigator.bind(this)
+    this._getExperienceButtonOnPress = this._getExperienceButtonOnPress.bind(this)
+    this._exitViro = this._exitViro.bind(this)
+  }
+
+  // Replace this function with the contents of _getVRNavigator() or _getARNavigator()
+  // if you are building a specific type of experience.
+  render() {
+    if (this.state.navigatorType == UNSET) {
+      return this._getExperienceSelector()
+    } else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
+      return this._getARNavigator()
+    }
+  }
+
+  // Presents the user with a choice of an AR or VR experience
+  _getExperienceSelector() {
+    return (
+      <View style={localStyles.outer}>
+        <View style={localStyles.inner}>
+          <Text style={localStyles.titleText}>Choose your desired experience:</Text>
+
+          <TouchableHighlight
+            style={localStyles.buttons}
+            onPress={this._getExperienceButtonOnPress(AR_NAVIGATOR_TYPE)}
+            underlayColor={'#68a0ff'}>
+            <Text style={localStyles.buttonText}>AR</Text>
+          </TouchableHighlight>
+        </View>
       </View>
-    </>
-  )
+    )
+  }
+
+  // Returns the ViroARSceneNavigator which will start the AR experience
+  _getARNavigator() {
+    return (
+      <>
+        <ViroARSceneNavigator {...this.state.sharedProps} initialScene={{ scene: InitialARScene }} />
+      </>
+    )
+  }
+
+  // This function returns an anonymous/lambda function to be used
+  // by the experience selector buttons
+  _getExperienceButtonOnPress(navigatorType) {
+    return () => {
+      this.setState({
+        navigatorType: navigatorType,
+      })
+    }
+  }
+
+  // This function "exits" Viro by setting the navigatorType to UNSET.
+  _exitViro() {
+    this.setState({
+      navigatorType: UNSET,
+    })
+  }
 }
 
-export default function LearningWithCards() {
-  return (
-    <>
-      <ImageBackground
-        source={require('images/learningWithCards1.png')}
-        style={{
-          width: size.screenWidth,
-          height: size.screenHeight,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <LookingForCard />
-      </ImageBackground>
-    </>
-  )
-}
+var localStyles = StyleSheet.create({
+  viroContainer: {
+    flex: 1,
+    backgroundColor: 'black',
+  },
+  outer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'black',
+  },
+  inner: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    backgroundColor: 'black',
+  },
+  titleText: {
+    paddingTop: 30,
+    paddingBottom: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 25,
+  },
+  buttonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 20,
+  },
+  buttons: {
+    height: 80,
+    width: 150,
+    paddingTop: 20,
+    paddingBottom: 20,
+    marginTop: 10,
+    marginBottom: 10,
+    backgroundColor: '#68a0cf',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#fff',
+  },
+  exitButton: {
+    height: 50,
+    width: 100,
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginTop: 10,
+    marginBottom: 10,
+    backgroundColor: '#68a0cf',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#fff',
+  },
+})
+
+module.exports = LearningWithCards

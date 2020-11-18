@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Text, View, ImageBackground, Image, TouchableOpacity } from 'react-native'
+import { AppRegistry, Text, View, ImageBackground, Image, TouchableOpacity } from 'react-native'
 import { color, size } from 'common'
 import { LearningWithCards, LearningWithoutCards } from './components'
 
