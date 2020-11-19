@@ -5,29 +5,36 @@
  * @format
  */
 
-module.exports = {
-  transformer: {
-    getTransformOptions: async () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: false,
-      },
-    }),
-  },
-}
+// module.exports = {
+//   // resolver: {
+//   //   assetExts: ['obj', 'mtl', 'jpg', 'vrx', 'hdr', 'gltf', 'glb', 'bin', 'arobject', 'png'],
+//   // },
+//   transformer: {
+//     getAssetExts() {
+//       return ['obj', 'mtl', 'JPG', 'vrx', 'hdr', 'gltf', 'glb', 'bin', 'arobject', 'gif']
+//     },
 
-// 'use strict';
+//     getTransformOptions: async () => ({
+//       transform: {
+//         experimentalImportSupport: false,
+//         inlineRequires: false,
+//       },
+//     }),
+//   },
+// }
 
-// const { getDefaultConfig } = require("metro-config");
+'use strict'
 
-// module.exports = (async () => {
-//   const {
-//     resolver: { assetExts }
-//   } = await getDefaultConfig();
+const { getDefaultConfig } = require('metro-config')
 
-//   return {
-//     resolver: {
-//       assetExts: [...assetExts, "obj", "mtl", "JPG", "vrx", "hdr", "gltf", "glb", "bin", "arobject", "gif"]
-//     }
-//   };
-// })();
+module.exports = (async () => {
+  const {
+    resolver: { assetExts },
+  } = await getDefaultConfig()
+
+  return {
+    resolver: {
+      assetExts: [...assetExts, 'obj', 'mtl', 'JPG', 'vrx', 'hdr', 'gltf', 'glb', 'bin', 'arobject', 'gif'],
+    },
+  }
+})()
