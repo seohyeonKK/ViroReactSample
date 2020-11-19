@@ -6,7 +6,5 @@ import { LearningWithCards, LearningWithoutCards } from './components'
 export default function LearningPage() {
   const [learningWithCards, setLearningWithCards] = useState(true)
 
-  return (
-      {true ? <LearningWithCards /> : <LearningWithoutCards />}
-  )
+  return <>{true ? <LearningWithCards /> : <LearningWithoutCards />}</>
 }
